@@ -6,9 +6,6 @@ import android.os.Parcelable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -19,8 +16,6 @@ import static org.junit.Assert.assertEquals;
  * Extend this class in order to easily test classes that implement {@link Parcelable}.
  * Tests depend upon a correct implementation of {@link P#equals(Object)}.
  */
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
 public abstract class ParcelableTest<P extends Parcelable> {
 
     private Parcel parcel;

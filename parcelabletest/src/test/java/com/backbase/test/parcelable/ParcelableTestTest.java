@@ -2,6 +2,10 @@ package com.backbase.test.parcelable;
 
 import android.os.Parcelable;
 
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
@@ -11,6 +15,7 @@ import androidx.annotation.NonNull;
 /**
  * Implements {@link ParcelableTest} for a complex {@link Parcelable} implementation
  */
+@RunWith(RobolectricTestRunner.class)
 public class ParcelableTestTest extends ParcelableTest<TestParcelable> {
 
     @NonNull
