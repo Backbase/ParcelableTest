@@ -1,5 +1,16 @@
 package com.backbase.test.instantiator;
 
+import com.backbase.test.instantiator.random.RandomBooleanInstantiator;
+import com.backbase.test.instantiator.random.RandomByteInstantiator;
+import com.backbase.test.instantiator.random.RandomCharInstantiator;
+import com.backbase.test.instantiator.random.RandomDoubleInstantiator;
+import com.backbase.test.instantiator.random.RandomEnumInstantiator;
+import com.backbase.test.instantiator.random.RandomFloatInstantiator;
+import com.backbase.test.instantiator.random.RandomIntInstantiator;
+import com.backbase.test.instantiator.random.RandomLongInstantiator;
+import com.backbase.test.instantiator.random.RandomShortInstantiator;
+import com.backbase.test.instantiator.random.RandomStringInstantiator;
+
 import java.util.Random;
 
 import androidx.annotation.NonNull;
@@ -9,7 +20,7 @@ import androidx.annotation.NonNull;
  * A {@link MultiTypeInstantiator} that supports all Java primitive types, their boxed counterparts, Strings, and enums. Support is provided via
  * individual constructor {@link Instantiator}s.
  */
-public class PrimitiveInstantiator implements MultiTypeInstantiator {
+public final class PrimitiveInstantiator implements MultiTypeInstantiator {
 
     private final Instantiator<Boolean> booleanInstantiator;
     private final Instantiator<Byte> byteInstantiator;

@@ -1,5 +1,6 @@
-package com.backbase.test.instantiator
+package com.backbase.test.instantiator.random
 
+import com.backbase.test.instantiator.Instantiator
 import java.util.Random
 
 /**

@@ -1,4 +1,4 @@
-package com.backbase.test.instantiator
+package com.backbase.test.instantiator.random
 
 import java.nio.charset.Charset
 import java.util.Random

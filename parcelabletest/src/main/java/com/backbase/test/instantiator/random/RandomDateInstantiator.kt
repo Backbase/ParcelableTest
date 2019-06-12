@@ -1,4 +1,4 @@
-package com.backbase.test.instantiator
+package com.backbase.test.instantiator.random
 
 import java.util.Date
 import java.util.Random

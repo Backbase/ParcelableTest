@@ -6,9 +6,9 @@ import com.backbase.test.instantiator.CompositeInstantiator;
 import com.backbase.test.instantiator.Instantiator;
 import com.backbase.test.instantiator.NumberInstantiator;
 import com.backbase.test.instantiator.PrimitiveInstantiator;
-import com.backbase.test.instantiator.RandomBigDecimalInstantiator;
-import com.backbase.test.instantiator.RandomDateInstantiator;
-import com.backbase.test.instantiator.RandomIntInstantiator;
+import com.backbase.test.instantiator.random.RandomBigDecimalInstantiator;
+import com.backbase.test.instantiator.random.RandomDateInstantiator;
+import com.backbase.test.instantiator.random.RandomIntInstantiator;
 import com.backbase.test.parcelable.ParcelableTest;
 
 import java.lang.reflect.Field;

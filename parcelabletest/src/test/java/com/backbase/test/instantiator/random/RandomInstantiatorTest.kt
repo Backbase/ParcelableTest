@@ -1,5 +1,6 @@
-package com.backbase.test.instantiator
+package com.backbase.test.instantiator.random
 
+import com.backbase.test.instantiator.InstantiatorTest
 import org.junit.Before
 import org.junit.runner.RunWith
 import org.mockito.Mock

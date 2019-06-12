@@ -1,5 +1,6 @@
-package com.backbase.test.instantiator
+package com.backbase.test.instantiator.random
 
+import com.backbase.test.instantiator.TestPrimitives
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
