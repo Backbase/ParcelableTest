@@ -1,7 +1,5 @@
 package com.backbase.test.instantiator;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Random;
 
 import androidx.annotation.NonNull;
@@ -62,7 +60,7 @@ public class PrimitiveInstantiator implements MultiTypeInstantiator {
     }
 
     @Override
-    public final <T> T instantiate(@NotNull Class<T> type) {
+    public final <T> T instantiate(@NonNull Class<T> type) {
         if (isBooleanType(type)) {
             //noinspection unchecked
             return (T) booleanInstantiator.instantiate();

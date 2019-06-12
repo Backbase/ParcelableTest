@@ -1,7 +1,5 @@
 package com.backbase.test.instantiator;
 
-import org.jetbrains.annotations.NotNull;
-
 import androidx.annotation.NonNull;
 
 /**
@@ -11,12 +9,12 @@ import androidx.annotation.NonNull;
 public abstract class EnumInstantiator implements MultiTypeInstantiator {
 
     @Override
-    public final boolean supports(@NotNull Class<?> type) {
+    public final boolean supports(@NonNull Class<?> type) {
         return Enum.class.isAssignableFrom(type);
     }
 
     @Override
-    public final <T> T instantiate(@NotNull Class<T> type) {
+    public final <T> T instantiate(@NonNull Class<T> type) {
         if (supports(type)) {
             //noinspection unchecked
             return (T) safelyInstantiate((Class<Enum>) type);

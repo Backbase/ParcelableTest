@@ -37,8 +37,12 @@ class PrimitiveInstantiatorTest : BasePrimitiveInstantiatorTest() {
         whenever(mockDoubleInstantiator.instantiate()).thenReturn(TestPrimitives.TEST_DOUBLE)
         whenever(mockCharInstantiator.instantiate()).thenReturn(TestPrimitives.TEST_CHAR)
         whenever(mockStringInstantiator.instantiate()).thenReturn(TestPrimitives.TEST_STRING)
-        whenever(mockEnumInstantiator.instantiate(any<Class<*>>())).thenAnswer { invocation ->
-            val enumClass: Class<Enum<*>> = invocation.getArgument(0) as Class<Enum<*>>
+        whenever(mockEnumInstantiator.supports(any())).thenAnswer { invocation ->
+            val classArg: Class<*> = invocation.getArgument(0)
+            classArg.isEnum
+        }
+        whenever(mockEnumInstantiator.instantiate(any<Class<Enum<*>>>())).thenAnswer { invocation ->
+            val enumClass: Class<Enum<*>> = invocation.getArgument(0)
             enumClass.enumConstants[0]
         }
 
