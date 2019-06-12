@@ -10,7 +10,3 @@ interface Instantiator<T> {
 
     fun instantiate(): T
 }
-
-// TODO Move to another file?
-// TODO Determine if isAssignableFrom is used correctly
-fun <O> Instantiator<*>.supports(type: Class<O>) = type.isAssignableFrom(supportedClass())

@@ -8,7 +8,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.Arrays
 
@@ -18,87 +17,63 @@ import java.util.Arrays
 @RunWith(MockitoJUnitRunner::class)
 class CompositeInstantiatorTest {
 
-    @Mock private lateinit var instantiator1: OldInstantiator
-    @Mock private lateinit var instantiator2: OldInstantiator
+    @Mock private lateinit var instantiator1: Instantiator<String>
+    @Mock private lateinit var instantiator2: Instantiator<Int>
 
-    private lateinit var instantiator: OldCompositeInstantiator
+    private lateinit var instantiator: CompositeInstantiator
 
     @Before
     fun setUp() {
-        instantiator = OldCompositeInstantiator(instantiator1, instantiator2)
+        whenever(instantiator1.supportedClass()).thenReturn(String::class.java)
+        whenever(instantiator2.supportedClass()).thenReturn(Int::class.java)
+        instantiator = CompositeInstantiator(instantiator1, instantiator2)
     }
 
     @Test
     fun `supports with any supporting Instantiator returns true`() {
-        val testClass = String::class.java
-        whenever(instantiator1.supports(testClass)).thenReturn(false)
-        whenever(instantiator2.supports(testClass)).thenReturn(true)
+        val testClass = Int::class.java
 
         assertTrue(instantiator.supports(testClass))
     }
 
     @Test
     fun `supports with no supporting Instantiator returns false`() {
-        val testClass = String::class.java
-        whenever(instantiator1.supports(testClass)).thenReturn(false)
-        whenever(instantiator2.supports(testClass)).thenReturn(false)
+        val testClass = Short::class.java
 
         assertFalse(instantiator.supports(testClass))
     }
 
     @Test
     fun `supports with list constructor and supporting Instantiator returns true`() {
-        instantiator = OldCompositeInstantiator(Arrays.asList(instantiator1, instantiator2))
+        instantiator = CompositeInstantiator(Arrays.asList(instantiator1, instantiator2))
 
-        val testClass = String::class.java
-        whenever(instantiator1.supports(testClass)).thenReturn(false)
-        whenever(instantiator2.supports(testClass)).thenReturn(true)
+        val testClass = Int::class.java
 
         assertTrue(instantiator.supports(testClass))
     }
 
     @Test
-    fun `instantiateSupportedType with multiple supporting Instantiators returns first instance`() {
-        val testClass = String::class.java
-        whenever(instantiator1.supports(testClass)).thenReturn(true)
-        whenever(instantiator1.instantiate(testClass)).thenReturn("1")
-
-        assertEquals("1", instantiator.instantiate(testClass))
-    }
-
-    @Test
     fun `instantiateSupportedType with 1 supporting Instantiator returns instance`() {
-        val testClass = String::class.java
-        whenever(instantiator1.supports(testClass)).thenReturn(false)
-        whenever(instantiator2.supports(testClass)).thenReturn(true)
-        whenever(instantiator2.instantiate(testClass)).thenReturn("2")
+        val testClass = Int::class.java
+        whenever(instantiator2.instantiate()).thenReturn(2)
 
-        assertEquals("2", instantiator.instantiate(testClass))
+        assertEquals(2, instantiator.instantiate(testClass))
     }
 
-    @Test(expected = UnsupportedOperationException::class)
-    fun `instantiateSupportedType with no supporting Instantiator throws UnsupportedOperationException`() {
-        val testClass = String::class.java
-        whenever(instantiator1.supports(testClass)).thenReturn(false)
-        whenever(instantiator2.supports(testClass)).thenReturn(false)
+    @Test(expected = IllegalStateException::class)
+    fun `instantiateSupportedType with no supporting Instantiator throws IllegalStateException`() {
+        val testClass = Short::class.java
 
         instantiator.instantiate(testClass)
     }
 
     @Test
     fun `instantiateSupportedType with list constructor and 1 supporting Instantiator returns instance`() {
-        instantiator = OldCompositeInstantiator(Arrays.asList(instantiator1, instantiator2))
+        instantiator = CompositeInstantiator(Arrays.asList(instantiator1, instantiator2))
 
-        val testClass = String::class.java
-        whenever(instantiator1.supports(testClass)).thenReturn(false)
-        whenever(instantiator2.supports(testClass)).thenReturn(true)
-        whenever(instantiator2.instantiate(testClass)).thenReturn("2")
+        val testClass = Int::class.java
+        whenever(instantiator2.instantiate()).thenReturn(2)
 
-        assertEquals("2", instantiator.instantiate(testClass))
-    }
-
-    @Test(expected = IllegalStateException::class)
-    fun `instantiateSupportedType with unsupported type throws IllegalArgumentException`() {
-        instantiator.instantiateSupportedType(CompositeInstantiatorTest::class.java)
+        assertEquals(2, instantiator.instantiate(testClass))
     }
 }
