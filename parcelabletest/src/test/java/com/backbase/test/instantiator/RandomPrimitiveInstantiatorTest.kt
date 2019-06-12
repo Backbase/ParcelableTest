@@ -4,7 +4,6 @@ import com.backbase.test.parcelable.TestEnum
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Before
 import org.junit.runner.RunWith
-import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.any
 import org.mockito.junit.MockitoJUnitRunner
@@ -22,10 +21,12 @@ class RandomPrimitiveInstantiatorTest : BasePrimitiveInstantiatorTest() {
 
     @Mock private lateinit var mockRandom: Random
 
-    @InjectMocks override lateinit var instantiator: RandomPrimitiveInstantiator
+    override lateinit var instantiator: PrimitiveInstantiator
 
     @Before
     fun setUp() {
+        instantiator = PrimitiveInstantiator(mockRandom)
+
         whenever(mockRandom.nextBoolean()).thenReturn(TestPrimitives.TEST_BOOLEAN)
         whenever(mockRandom.nextInt(Short.MAX_VALUE.toInt())).thenReturn(TestPrimitives.TEST_SHORT.toInt())
         whenever(mockRandom.nextInt()).thenReturn(TestPrimitives.TEST_INT)

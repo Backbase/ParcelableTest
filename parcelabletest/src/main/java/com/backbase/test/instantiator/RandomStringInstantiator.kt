@@ -16,7 +16,8 @@ class RandomStringInstantiator(
     constructor(random: Random) : this(random, 50)
 
     override fun instantiate(random: Random): String {
-        val byteArray = ByteArray(maxLength)
+        val length = random.nextInt(maxLength)
+        val byteArray = ByteArray(length)
         random.nextBytes(byteArray)
         return String(byteArray, Charset.defaultCharset())
     }

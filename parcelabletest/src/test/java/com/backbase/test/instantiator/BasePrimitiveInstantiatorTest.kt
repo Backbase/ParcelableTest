@@ -12,7 +12,7 @@ import org.junit.Test
  */
 abstract class BasePrimitiveInstantiatorTest {
 
-    protected abstract val instantiator: OldPrimitiveInstantiator
+    protected abstract val instantiator: PrimitiveInstantiator
 
     protected open val testByte = TestPrimitives.TEST_BYTE
 
@@ -77,10 +77,11 @@ abstract class BasePrimitiveInstantiatorTest {
     private fun testSupportsClass(testClass: Class<out Any>?, isSupported: Boolean = true) {
         if (testClass == null) throw IllegalArgumentException("Null classes are not supported")
 
+        val isActuallySupported = instantiator.supports(testClass)
         if (isSupported)
-            assertTrue(instantiator.supports(testClass))
+            assertTrue(isActuallySupported)
         else
-            assertFalse(instantiator.supports(testClass))
+            assertFalse(isActuallySupported)
     }
     //endregion
 
@@ -115,23 +116,23 @@ abstract class BasePrimitiveInstantiatorTest {
     @Test
     fun `enum is provided`() = testInstantiatesClass(TestEnum.A, isPrimitive = false)
 
-    @Test(expected = IllegalStateException::class)
-    fun `instantiateSupportedType with unsupported type throws IllegalArgumentException`() {
-        instantiator.instantiateSupportedType(BasePrimitiveInstantiatorTest::class.java)
+    @Test(expected = IllegalArgumentException::class)
+    fun `instantiate with unsupported type throws IllegalArgumentException`() {
+        instantiator.instantiate(BasePrimitiveInstantiatorTest::class.java)
     }
 
     private inline fun <reified T : Any> testInstantiatesClass(expectedValue: T, isPrimitive: Boolean = true) {
         val tClass = T::class.java
         if (!instantiator.supports(tClass))
             fail("Cannot instantiate ${tClass.simpleName}")
-        assertEquals(expectedValue, instantiator.instantiateSupportedType(tClass))
+        assertEquals(expectedValue, instantiator.instantiate(tClass))
 
         if (isPrimitive) {
             val tPrimitiveType = T::class.javaPrimitiveType
                     ?: throw IllegalArgumentException("isPrimitive is true, so ${tClass.simpleName} must be a primitive type")
             if (!instantiator.supports(tPrimitiveType))
                 fail("Cannot instantiate ${tPrimitiveType.simpleName}")
-            assertEquals(expectedValue, instantiator.instantiateSupportedType(tPrimitiveType))
+            assertEquals(expectedValue, instantiator.instantiate(tPrimitiveType))
         }
     }
     //endregion
