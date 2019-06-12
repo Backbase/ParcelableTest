@@ -1,13 +1,51 @@
 package com.backbase.test.instantiator;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Random;
+
 import androidx.annotation.NonNull;
 
 /**
- * Created by Backbase R&D B.V. on 10/12/2018.
- *
- * A specialized {@link Instantiator} that supports primitives, strings, and enums.
+ * Created by Backbase R&D B.V. on 2019-06-12.
+ * A {@link MultiTypeInstantiator} that supports all Java primitive types, their boxed counterparts, Strings, and enums. Support is provided via
+ * individual constructor {@link Instantiator}s.
  */
-public abstract class PrimitiveInstantiator extends TypeLimitedInstantiator {
+public class PrimitiveInstantiator implements MultiTypeInstantiator {
+
+    private final Instantiator<Boolean> booleanInstantiator;
+    private final Instantiator<Byte> byteInstantiator;
+    private final Instantiator<Short> shortInstantiator;
+    private final Instantiator<Integer> integerInstantiator;
+    private final Instantiator<Long> longInstantiator;
+    private final Instantiator<Float> floatInstantiator;
+    private final Instantiator<Double> doubleInstantiator;
+    private final Instantiator<Character> characterInstantiator;
+    private final Instantiator<String> stringInstantiator;
+    private final EnumInstantiator enumInstantiator;
+
+    public PrimitiveInstantiator(Random random) {
+        this(new RandomBooleanInstantiator(random), new RandomByteInstantiator(random), new RandomShortInstantiator(random),
+                new RandomIntInstantiator(random), new RandomLongInstantiator(random), new RandomFloatInstantiator(random),
+                new RandomDoubleInstantiator(random), new RandomCharInstantiator(random), new RandomStringInstantiator(random),
+                new RandomEnumInstantiator(random));
+    }
+
+    public PrimitiveInstantiator(Instantiator<Boolean> booleanInstantiator, Instantiator<Byte> byteInstantiator,
+            Instantiator<Short> shortInstantiator, Instantiator<Integer> integerInstantiator, Instantiator<Long> longInstantiator,
+            Instantiator<Float> floatInstantiator, Instantiator<Double> doubleInstantiator, Instantiator<Character> characterInstantiator,
+            Instantiator<String> stringInstantiator, EnumInstantiator enumInstantiator) {
+        this.booleanInstantiator = booleanInstantiator;
+        this.byteInstantiator = byteInstantiator;
+        this.shortInstantiator = shortInstantiator;
+        this.integerInstantiator = integerInstantiator;
+        this.longInstantiator = longInstantiator;
+        this.floatInstantiator = floatInstantiator;
+        this.doubleInstantiator = doubleInstantiator;
+        this.characterInstantiator = characterInstantiator;
+        this.stringInstantiator = stringInstantiator;
+        this.enumInstantiator = enumInstantiator;
+    }
 
     @Override
     public final boolean supports(@NonNull Class<?> objectClass) {
@@ -20,75 +58,44 @@ public abstract class PrimitiveInstantiator extends TypeLimitedInstantiator {
                 || isDoubleType(objectClass)
                 || isCharacterType(objectClass)
                 || isStringType(objectClass)
-                || isEnumType(objectClass);
+                || enumInstantiator.supports(objectClass);
     }
 
     @Override
-    public final <O> O instantiateSupportedType(@NonNull Class<O> objectClass) {
-        if (isBooleanType(objectClass)) {
+    public final <T> T instantiate(@NotNull Class<T> type) {
+        if (isBooleanType(type)) {
             //noinspection unchecked
-            return (O) instantiateBoolean();
-        } else if (isByteType(objectClass)) {
+            return (T) booleanInstantiator.instantiate();
+        } else if (isByteType(type)) {
             //noinspection unchecked
-            return (O) instantiateByte();
-        } else if (isShortType(objectClass)) {
+            return (T) byteInstantiator.instantiate();
+        } else if (isShortType(type)) {
             //noinspection unchecked
-            return (O) instantiateShort();
-        } else if (isIntegerType(objectClass)) {
+            return (T) shortInstantiator.instantiate();
+        } else if (isIntegerType(type)) {
             //noinspection unchecked
-            return (O) instantiateInteger();
-        } else if (isLongType(objectClass)) {
+            return (T) integerInstantiator.instantiate();
+        } else if (isLongType(type)) {
             //noinspection unchecked
-            return (O) instantiateLong();
-        } else if (isFloatType(objectClass)) {
+            return (T) longInstantiator.instantiate();
+        } else if (isFloatType(type)) {
             //noinspection unchecked
-            return (O) instantiateFloat();
-        } else if (isDoubleType(objectClass)) {
+            return (T) floatInstantiator.instantiate();
+        } else if (isDoubleType(type)) {
             //noinspection unchecked
-            return (O) instantiateDouble();
-        } else if (isCharacterType(objectClass)) {
+            return (T) doubleInstantiator.instantiate();
+        } else if (isCharacterType(type)) {
             //noinspection unchecked
-            return (O) instantiateCharacter();
-        } else if (isStringType(objectClass)) {
+            return (T) characterInstantiator.instantiate();
+        } else if (isStringType(type)) {
             //noinspection unchecked
-            return (O) instantiateString();
-        } else if (isEnumType(objectClass)) {
-            //noinspection unchecked
-            return (O) provideEnum((Class<Enum>) objectClass);
+            return (T) stringInstantiator.instantiate();
+        } else if (enumInstantiator.supports(type)) {
+            return enumInstantiator.instantiate(type);
         } else {
-            throw new IllegalStateException("Expected a supported type, by got " + objectClass.getName() + " instead");
+            throw new IllegalArgumentException("Expected a supported type, by got " + type.getName() + " instead");
         }
     }
-
-    @NonNull
-    protected abstract Boolean instantiateBoolean();
-
-    @NonNull
-    protected abstract Byte instantiateByte();
-
-    @NonNull
-    protected abstract Short instantiateShort();
-
-    @NonNull
-    protected abstract Integer instantiateInteger();
-
-    @NonNull
-    protected abstract Long instantiateLong();
-
-    @NonNull
-    protected abstract Float instantiateFloat();
-
-    @NonNull
-    protected abstract Double instantiateDouble();
-
-    @NonNull
-    protected abstract Character instantiateCharacter();
-
-    @NonNull
-    protected abstract String instantiateString();
-
-    @NonNull
-    protected abstract <E extends Enum<E>> E provideEnum(@NonNull Class<E> enumType);
 
     private static boolean isBooleanType(Class<?> objectClass) {
         return objectClass == boolean.class || objectClass == Boolean.class;
@@ -124,9 +131,5 @@ public abstract class PrimitiveInstantiator extends TypeLimitedInstantiator {
 
     private static boolean isStringType(Class<?> objectClass) {
         return objectClass == String.class;
-    }
-
-    private static boolean isEnumType(Class<?> objectClass) {
-        return Enum.class.isAssignableFrom(objectClass);
     }
 }

@@ -10,10 +10,11 @@ import androidx.annotation.NonNull;
 
 /**
  * Created by Backbase R&D B.V. on 10/12/2018.
- * An {@link Instantiator} that instantiates an {@link ArrayList} given any
+ * An {@link OldInstantiator} that instantiates an {@link ArrayList} given any
  * superclass of {@link ArrayList}.
  */
-public abstract class ArrayListInstantiator extends TypeLimitedInstantiator {
+@Deprecated
+public abstract class OldArrayListInstantiator extends TypeLimitedInstantiator {
 
     @Override
     public final boolean supports(@NonNull Class<?> objectClass) {

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 /**
  * Created by Backbase R&D B.V. on 12/12/2018.
  */
+@Deprecated
 public final class IntegerNumberInstantiator extends RandomTypeLimitedInstantiator {
 
     public IntegerNumberInstantiator() {

@@ -7,7 +7,8 @@ import androidx.annotation.NonNull;
  *
  * An item that supports instantiating objects given an input class type.
  */
-public interface Instantiator {
+@Deprecated
+public interface OldInstantiator {
 
     boolean supports(@NonNull Class<?> objectClass);
 

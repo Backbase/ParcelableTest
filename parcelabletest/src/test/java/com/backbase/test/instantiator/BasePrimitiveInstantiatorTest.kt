@@ -12,7 +12,7 @@ import org.junit.Test
  */
 abstract class BasePrimitiveInstantiatorTest {
 
-    protected abstract val instantiator: PrimitiveInstantiator
+    protected abstract val instantiator: OldPrimitiveInstantiator
 
     protected open val testByte = TestPrimitives.TEST_BYTE
 

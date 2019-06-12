@@ -10,7 +10,8 @@ import androidx.annotation.NonNull;
  *
  * Instantiates primitive types based on an instance of {@link java.util.Random}.
  */
-public final class RandomPrimitiveInstantiator extends PrimitiveInstantiator {
+@Deprecated
+public final class RandomPrimitiveInstantiator extends OldPrimitiveInstantiator {
 
     private final Random random;
 

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
  * Instantiates a {@link BigDecimal}. If a non-null {@link Random} is provided,
  * each instantiated {@link BigDecimal} is initialized with a random int.
  */
+@Deprecated
 public final class BigDecimalInstantiator extends RandomTypeLimitedInstantiator {
 
     public BigDecimalInstantiator() {

@@ -2,14 +2,13 @@ package com.backbase.test.parcelable.reflection;
 
 import android.os.Parcelable;
 
-import com.backbase.test.instantiator.BigDecimalInstantiator;
 import com.backbase.test.instantiator.CompositeInstantiator;
-import com.backbase.test.instantiator.DateInstantiator;
-import com.backbase.test.instantiator.EmptyArrayListInstantiator;
 import com.backbase.test.instantiator.Instantiator;
-import com.backbase.test.instantiator.IntegerNumberInstantiator;
+import com.backbase.test.instantiator.NumberInstantiator;
 import com.backbase.test.instantiator.PrimitiveInstantiator;
-import com.backbase.test.instantiator.RandomPrimitiveInstantiator;
+import com.backbase.test.instantiator.RandomBigDecimalInstantiator;
+import com.backbase.test.instantiator.RandomDateInstantiator;
+import com.backbase.test.instantiator.RandomIntInstantiator;
 import com.backbase.test.parcelable.ParcelableTest;
 
 import java.lang.reflect.Field;
@@ -29,13 +28,12 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Backbase R&D B.V. on 07/12/2018.
  *
- * Tests an arbitrary {@link Parcelable} implementation without requiring any work in the
- * implementation test class. Constructs an instance of {@link P} via reflection, populates
- * all of its fields via reflection, and then checks that item's equality with a copy that has
- * been parcelized and unparcelized.
- * Any part of this may throw a security exception depending on your JRE's security
- * manager. For these cases, it is best to either provide custom {@link Instantiator}s
- * or just use {@link ParcelableTest} without reflection.
+ * Tests an arbitrary {@link Parcelable} implementation without requiring any work in the implementation test class. Constructs an instance of
+ * {@link P} via reflection, populates all of its fields via reflection, and then checks that item's equality with a copy that has been parceled and
+ * un-parceled.
+ * <p>
+ * Any part of this may throw a security exception depending on your JRE's security manager. For these cases, it is best to either provide custom
+ * {@link Instantiator}s or just use {@link ParcelableTest} without reflection.
  */
 public abstract class ReflectiveParcelableTest<P extends Parcelable> extends ParcelableTest<P> {
 
@@ -49,7 +47,7 @@ public abstract class ReflectiveParcelableTest<P extends Parcelable> extends Par
     @Override
     public void setUp() {
         super.setUp();
-        final List<Instantiator> preferredInstantiators = new ArrayList<>(getPreferredInstantiators());
+        final List<Instantiator<?>> preferredInstantiators = new ArrayList<>(getPreferredInstantiators());
         preferredInstantiators.addAll(defaultPreferredInstantiators());
         reflectiveInstantiator = new ReflectiveInstantiator(getPrimitiveInstantiator(), new CompositeInstantiator(preferredInstantiators));
     }
@@ -81,7 +79,7 @@ public abstract class ReflectiveParcelableTest<P extends Parcelable> extends Par
     }
 
     protected PrimitiveInstantiator getPrimitiveInstantiator() {
-        return new RandomPrimitiveInstantiator(RANDOM);
+        return new PrimitiveInstantiator(RANDOM);
     }
 
     /**
@@ -90,7 +88,7 @@ public abstract class ReflectiveParcelableTest<P extends Parcelable> extends Par
      * the first supporting {@link Instantiator} in the list will be used.
      * @return the list of additional {@link Instantiator}s
      */
-    protected List<Instantiator> getPreferredInstantiators() {
+    protected List<Instantiator<?>> getPreferredInstantiators() {
         return Collections.emptyList();
     }
 
@@ -99,12 +97,11 @@ public abstract class ReflectiveParcelableTest<P extends Parcelable> extends Par
         return ((Class<P>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
     }
 
-    private static List<Instantiator> defaultPreferredInstantiators() {
+    private static List<Instantiator<?>> defaultPreferredInstantiators() {
         return Arrays.asList(
-                (Instantiator) new EmptyArrayListInstantiator(),
-                new DateInstantiator(RANDOM),
-                new BigDecimalInstantiator(RANDOM),
-                new IntegerNumberInstantiator(RANDOM));
+                new RandomDateInstantiator(RANDOM),
+                new RandomBigDecimalInstantiator(RANDOM),
+                new NumberInstantiator(new RandomIntInstantiator(RANDOM)));
     }
 
     public static final class RuntimeReflectionException extends RuntimeException {

@@ -4,36 +4,42 @@ import android.os.Parcel;
 
 import com.backbase.test.instantiator.CompositeInstantiator;
 import com.backbase.test.instantiator.Instantiator;
+import com.backbase.test.instantiator.MultiTypeInstantiator;
 import com.backbase.test.instantiator.PrimitiveInstantiator;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Collections;
 
 import androidx.annotation.NonNull;
 
 /**
  * Created by Backbase R&D B.V. on 07/12/2018.
  *
- * Attempts to instantiate objects using the provided {@link Instantiator}s first,
- * then falls back to using reflection if the provided {@link Instantiator}s do
- * not support the desired type.
- * Any part of this may throw a security exception depending on your JRE's security
- * manager. For these cases, it is best to either provide custom {@link Instantiator}s
- * or just not use this class at all.
+ * Attempts to instantiate objects using the provided {@link MultiTypeInstantiator}s first, then falls back to using reflection if the provided
+ * {@link MultiTypeInstantiator}s do not support the desired type.
+ * <p>
+ * Any part of this may throw a security exception depending on your JRE's security manager. For these cases, it is best to either provide custom
+ * {@link Instantiator}s or just not use this class at all.
  */
-final class ReflectiveInstantiator implements Instantiator {
+final class ReflectiveInstantiator implements MultiTypeInstantiator {
 
-    @NonNull private final CompositeInstantiator preferredDelegates;
+    @NonNull private final MultiTypeInstantiator preferredInstantiator;
+    @NonNull private final PrimitiveInstantiator primitiveInstantiator;
 
     /**
      * @param primitiveInstantiator a delegate that handles instantiating any primitive, string, and enum types.
      */
     ReflectiveInstantiator(@NonNull PrimitiveInstantiator primitiveInstantiator) {
-        this(primitiveInstantiator, new CompositeInstantiator(Collections.<Instantiator>emptyList()));
+        this(primitiveInstantiator, new CompositeInstantiator());
+    }
+
+    /**
+     * Construct an instance with the given {@link PrimitiveInstantiator} and any number of preferred {@link Instantiator}s to try before falling back
+     * to reflection.
+     */
+    ReflectiveInstantiator(@NonNull PrimitiveInstantiator primitiveInstantiator, @NonNull Instantiator... preferredInstantiators) {
+        this(primitiveInstantiator, new CompositeInstantiator(preferredInstantiators));
     }
 
     /**
@@ -41,9 +47,9 @@ final class ReflectiveInstantiator implements Instantiator {
      * @param preferredInstantiator a delegate used to instantiate any supported type before reflection is attempted.
      *                              Useful for types that cause reflection issues.
      */
-    ReflectiveInstantiator(@NonNull PrimitiveInstantiator primitiveInstantiator, @NonNull Instantiator preferredInstantiator) {
-        // Put primitiveInstantiator after preferredInstantiator in case implementer wants to provide some custom primitive instantiation:
-        preferredDelegates = new CompositeInstantiator(Arrays.asList(preferredInstantiator, primitiveInstantiator));
+    ReflectiveInstantiator(@NonNull PrimitiveInstantiator primitiveInstantiator, @NonNull MultiTypeInstantiator preferredInstantiator) {
+        this.preferredInstantiator = preferredInstantiator;
+        this.primitiveInstantiator = primitiveInstantiator;
     }
 
     /**
@@ -51,10 +57,10 @@ final class ReflectiveInstantiator implements Instantiator {
      * work via reflection without actually trying. May be possible to optimize in the future. For now it's
      * best to skip this method and just try {@link #instantiate(Class)}.
      */
-    // TODO Handle arrays
     @Override
     public boolean supports(@NonNull Class<?> objectClass) {
         if (objectClass.isArray()) {
+            // TODO Handle arrays
             return false;
         } else {
             try {
@@ -67,19 +73,19 @@ final class ReflectiveInstantiator implements Instantiator {
     }
 
     /**
-     * Constructs an {@link O} with all of its member fields populated. First attempts to use one of
-     * the additional {@link Instantiator}s provided in the constructor. If none of those supports the
-     * given type, attempts to use the {@link PrimitiveInstantiator} provided in the constructor. If
-     * the given type is still not supported, this method uses reflection to instantiate the object
-     * and recursion to populate any member fields.
+     * Constructs an {@link O} with all of its member fields populated. First attempts to use one of the additional {@link Instantiator}s provided in
+     * the constructor. If none of those supports the given type, attempts to use the {@link PrimitiveInstantiator} provided in the constructor. If
+     * the given type is still not supported, this method uses reflection to instantiate the object and recursion to populate any member fields.
      *
      * @param objectClass The class to instantiate
      * @return an object of type {@link O} with all of its member fields populated.
      */
     @Override
     public <O> O instantiate(@NonNull Class<O> objectClass) {
-        if (preferredDelegates.supports(objectClass)) {
-            return preferredDelegates.instantiate(objectClass);
+        if (preferredInstantiator.supports(objectClass)) {
+            return preferredInstantiator.instantiate(objectClass);
+        } else if (primitiveInstantiator.supports(objectClass)) {
+            return primitiveInstantiator.instantiate(objectClass);
         } else {
             return reflectivelyInstantiate(objectClass);
         }

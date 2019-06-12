@@ -5,10 +5,10 @@ import androidx.annotation.NonNull;
 /**
  * Created by Backbase R&D B.V. on 10/12/2018.
  *
- * An {@link Instantiator} that throws an exception in {@link #instantiate(Class)} if the given
+ * An {@link OldInstantiator} that throws an exception in {@link #instantiate(Class)} if the given
  * {@link Class} is not supported.
  */
-public abstract class TypeLimitedInstantiator implements Instantiator {
+public abstract class TypeLimitedInstantiator implements OldInstantiator {
 
     @Override
     public final <O> O instantiate(@NonNull Class<O> objectClass) {

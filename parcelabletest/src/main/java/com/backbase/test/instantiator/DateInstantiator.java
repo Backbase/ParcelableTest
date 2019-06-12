@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 /**
  * Created by Backbase R&D B.V. on 10/12/2018.
  */
+@Deprecated
 public final class DateInstantiator extends RandomTypeLimitedInstantiator {
 
     public DateInstantiator() {

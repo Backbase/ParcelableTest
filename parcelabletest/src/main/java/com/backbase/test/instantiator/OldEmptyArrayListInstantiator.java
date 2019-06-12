@@ -9,7 +9,8 @@ import androidx.annotation.NonNull;
  * Instantiates an empty {@link ArrayList} given an abstract superclass
  * of {@link ArrayList}
  */
-public final class EmptyArrayListInstantiator extends ArrayListInstantiator {
+@Deprecated
+public final class OldEmptyArrayListInstantiator extends OldArrayListInstantiator {
 
     @Override
     protected <T> void populateArrayList(@NonNull ArrayList<T> list) {

@@ -7,14 +7,14 @@ import org.junit.Before
  */
 class PrimitiveInstantiatorTest : BasePrimitiveInstantiatorTest() {
 
-    override lateinit var instantiator: PrimitiveInstantiator
+    override lateinit var instantiator: OldPrimitiveInstantiator
 
     @Before
     fun setUp() {
         instantiator = TestInstantiator()
     }
 
-    private class TestInstantiator : PrimitiveInstantiator() {
+    private class TestInstantiator : OldPrimitiveInstantiator() {
 
         override fun instantiateBoolean() = TestPrimitives.TEST_BOOLEAN
 

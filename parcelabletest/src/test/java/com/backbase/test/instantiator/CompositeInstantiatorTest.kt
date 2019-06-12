@@ -18,14 +18,14 @@ import java.util.Arrays
 @RunWith(MockitoJUnitRunner::class)
 class CompositeInstantiatorTest {
 
-    @Mock private lateinit var instantiator1: Instantiator
-    @Mock private lateinit var instantiator2: Instantiator
+    @Mock private lateinit var instantiator1: OldInstantiator
+    @Mock private lateinit var instantiator2: OldInstantiator
 
-    private lateinit var instantiator: CompositeInstantiator
+    private lateinit var instantiator: OldCompositeInstantiator
 
     @Before
     fun setUp() {
-        instantiator = CompositeInstantiator(instantiator1, instantiator2)
+        instantiator = OldCompositeInstantiator(instantiator1, instantiator2)
     }
 
     @Test
@@ -48,7 +48,7 @@ class CompositeInstantiatorTest {
 
     @Test
     fun `supports with list constructor and supporting Instantiator returns true`() {
-        instantiator = CompositeInstantiator(Arrays.asList(instantiator1, instantiator2))
+        instantiator = OldCompositeInstantiator(Arrays.asList(instantiator1, instantiator2))
 
         val testClass = String::class.java
         whenever(instantiator1.supports(testClass)).thenReturn(false)
@@ -87,7 +87,7 @@ class CompositeInstantiatorTest {
 
     @Test
     fun `instantiateSupportedType with list constructor and 1 supporting Instantiator returns instance`() {
-        instantiator = CompositeInstantiator(Arrays.asList(instantiator1, instantiator2))
+        instantiator = OldCompositeInstantiator(Arrays.asList(instantiator1, instantiator2))
 
         val testClass = String::class.java
         whenever(instantiator1.supports(testClass)).thenReturn(false)
