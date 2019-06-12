@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
  * An {@link OldInstantiator} that throws an exception in {@link #instantiate(Class)} if the given
  * {@link Class} is not supported.
  */
+@Deprecated
 public abstract class TypeLimitedInstantiator implements OldInstantiator {
 
     @Override

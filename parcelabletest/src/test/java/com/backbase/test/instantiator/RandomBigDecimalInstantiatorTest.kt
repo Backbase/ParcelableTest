@@ -10,15 +10,13 @@ import java.util.Random
  * Created by Backbase R&D B.V. on 18/02/2019.
  */
 @RunWith(MockitoJUnitRunner::class)
-class BigDecimalInstantiatorTest : RandomTypeLimitedInstantiatorTest<BigDecimalInstantiator, BigDecimal>() {
+class RandomBigDecimalInstantiatorTest : RandomInstantiatorTest<BigDecimal>() {
 
     override val supportedType: Class<BigDecimal> = BigDecimal::class.java
 
-    override val expectedRandomInstance = BigDecimal(TestPrimitives.TEST_INT)
-    override val expectedFallbackInstance = BigDecimal(1)
+    override val expectedInstance = BigDecimal(TestPrimitives.TEST_INT)
 
-    override fun newInstantiator() = BigDecimalInstantiator()
-    override fun newInstantiator(random: Random) = BigDecimalInstantiator(random)
+    override fun newInstantiator(random: Random) = RandomBigDecimalInstantiator(random)
 
     override fun mockRandom(mockRandom: Random) {
         whenever(mockRandom.nextInt()).thenReturn(TestPrimitives.TEST_INT)
