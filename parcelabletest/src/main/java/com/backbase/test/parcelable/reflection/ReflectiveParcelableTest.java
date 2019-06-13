@@ -3,7 +3,9 @@ package com.backbase.test.parcelable.reflection;
 import android.os.Parcelable;
 
 import com.backbase.test.instantiator.CompositeInstantiator;
+import com.backbase.test.instantiator.CompositeMultiTypeInstantiator;
 import com.backbase.test.instantiator.Instantiator;
+import com.backbase.test.instantiator.MultiTypeInstantiator;
 import com.backbase.test.instantiator.NumberInstantiator;
 import com.backbase.test.instantiator.PrimitiveInstantiator;
 import com.backbase.test.instantiator.random.RandomBigDecimalInstantiator;
@@ -14,13 +16,9 @@ import com.backbase.test.parcelable.ParcelableTest;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.lang.reflect.Type;
 import java.util.Random;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 
 import static org.junit.Assert.assertTrue;
@@ -41,16 +39,49 @@ public abstract class ReflectiveParcelableTest<P extends Parcelable> extends Par
 
     private static final Random RANDOM = new Random();
 
+    private static final Instantiator<?>[] DEFAULT_PREFERRED_INSTANTIATORS = {
+            new RandomDateInstantiator(RANDOM),
+            new RandomBigDecimalInstantiator(RANDOM),
+            new NumberInstantiator(new RandomIntInstantiator(RANDOM))
+    };
+
+    private static PrimitiveInstantiator defaultPrimitiveInstantiator() {
+        return PrimitiveInstantiator.ofRandom(RANDOM);
+    }
+
     private RobustReflectiveInstantiator instantiator;
 
-    @CallSuper
-    @Override
-    public void setUp() {
-        super.setUp();
-        final List<Instantiator<?>> preferredInstantiators = new ArrayList<>(getPreferredInstantiators());
-        preferredInstantiators.addAll(defaultPreferredInstantiators());
-        instantiator = new RobustReflectiveInstantiator(new CompositeInstantiator(preferredInstantiators), getPrimitiveInstantiator(),
-                new ReflectiveInstantiator());
+    public ReflectiveParcelableTest() {
+        this(defaultPrimitiveInstantiator());
+    }
+
+    public ReflectiveParcelableTest(@NonNull Instantiator<?>... preferredInstantiators) {
+        this(defaultPrimitiveInstantiator(), preferredInstantiators);
+    }
+
+    public ReflectiveParcelableTest(@NonNull PrimitiveInstantiator primitiveInstantiator, @NonNull Instantiator<?>... preferredInstantiators) {
+        this(primitiveInstantiator, new CompositeInstantiator(preferredInstantiators));
+    }
+
+    public ReflectiveParcelableTest(@NonNull MultiTypeInstantiator... preferredInstantiators) {
+        this(defaultPrimitiveInstantiator(), preferredInstantiators);
+    }
+
+    public ReflectiveParcelableTest(@NonNull PrimitiveInstantiator primitiveInstantiator, @NonNull MultiTypeInstantiator... preferredInstantiators) {
+        this(primitiveInstantiator, new CompositeMultiTypeInstantiator(preferredInstantiators));
+    }
+
+    public ReflectiveParcelableTest(@NonNull PrimitiveInstantiator primitiveInstantiator) {
+        this(primitiveInstantiator, new CompositeInstantiator(DEFAULT_PREFERRED_INSTANTIATORS));
+    }
+
+    public ReflectiveParcelableTest(@NonNull PrimitiveInstantiator primitiveInstantiator, @NonNull MultiTypeInstantiator preferredInstantiator) {
+        this(primitiveInstantiator, new ReflectiveInstantiator(), preferredInstantiator);
+    }
+
+    ReflectiveParcelableTest(@NonNull PrimitiveInstantiator primitiveInstantiator, @NonNull ReflectiveInstantiator reflectiveInstantiator,
+            @NonNull MultiTypeInstantiator preferredInstantiator) {
+        instantiator = new RobustReflectiveInstantiator(preferredInstantiator, primitiveInstantiator, reflectiveInstantiator);
     }
 
     @NonNull
@@ -79,30 +110,18 @@ public abstract class ReflectiveParcelableTest<P extends Parcelable> extends Par
         }
     }
 
-    protected PrimitiveInstantiator getPrimitiveInstantiator() {
-        return PrimitiveInstantiator.ofRandom(RANDOM);
-    }
-
     /**
-     * Override to add additional {@link Instantiator}s. If a given member
-     * variable is supported by one of this list's {@link Instantiator}s,
-     * the first supporting {@link Instantiator} in the list will be used.
-     * @return the list of additional {@link Instantiator}s
+     * Resolves the class of {@link P} using reflection. If there is more than 1 level of inheritance before {@link P} is concrete, this method should
+     * be overridden.
      */
-    protected List<Instantiator<?>> getPreferredInstantiators() {
-        return Collections.emptyList();
-    }
-
-    private Class<P> getItemClass() {
-        //noinspection unchecked: The type argument does correctly resolve to Class<P>
-        return ((Class<P>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
-    }
-
-    private static List<Instantiator<?>> defaultPreferredInstantiators() {
-        return Arrays.asList(
-                new RandomDateInstantiator(RANDOM),
-                new RandomBigDecimalInstantiator(RANDOM),
-                new NumberInstantiator(new RandomIntInstantiator(RANDOM)));
+    protected Class<P> getItemClass() {
+        Type genericSuperclass = getClass().getGenericSuperclass();
+        if (genericSuperclass instanceof ParameterizedType) {
+            //noinspection unchecked Method should be overridden if ClassCastException is thrown.
+            return (Class<P>) ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+        } else {
+            throw new UnsupportedOperationException("Superclass type could not be determined. Please override this method.");
+        }
     }
 
     public static final class RuntimeReflectionException extends RuntimeException {
