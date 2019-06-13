@@ -15,14 +15,12 @@ class RandomStringInstantiator(
     // Manual overload needed for Java visibility:
     constructor(random: Random) : this(random, 50)
 
+    override val supportedType = String::class.java
+
     override fun instantiate(random: Random): String {
         val length = random.nextInt(maxLength)
         val byteArray = ByteArray(length)
         random.nextBytes(byteArray)
         return String(byteArray, Charset.defaultCharset())
-    }
-
-    override fun supportedType(): Class<String> {
-        return String::class.java
     }
 }

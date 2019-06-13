@@ -6,7 +6,7 @@ package com.backbase.test.instantiator
  */
 interface Instantiator<T> {
 
-    fun supportedType(): Class<T>
+    val supportedType: Class<T>
 
     fun instantiate(): T
 }

@@ -8,7 +8,7 @@ import java.util.Random
  */
 class RandomDoubleInstantiator(random: Random) : RandomInstantiator<Double>(random) {
 
-    override fun instantiate(random: Random) = random.nextDouble()
+    override val supportedType = Double::class.java
 
-    override fun supportedType() = Double::class.java
+    override fun instantiate(random: Random) = random.nextDouble()
 }

@@ -8,7 +8,7 @@ import java.util.Random
  */
 class RandomBigDecimalInstantiator(random: Random) : RandomInstantiator<BigDecimal>(random) {
 
-    override fun instantiate(random: Random) = BigDecimal(random.nextInt())
+    override val supportedType = BigDecimal::class.java
 
-    override fun supportedType() = BigDecimal::class.java
+    override fun instantiate(random: Random) = BigDecimal(random.nextInt())
 }

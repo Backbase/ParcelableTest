@@ -8,11 +8,11 @@ import java.util.Random
  */
 class RandomByteInstantiator(random: Random) : RandomInstantiator<Byte>(random) {
 
+    override val supportedType = Byte::class.java
+
     override fun instantiate(random: Random): Byte {
         val byteArray = ByteArray(1)
         random.nextBytes(byteArray)
         return byteArray[0]
     }
-
-    override fun supportedType() = Byte::class.java
 }

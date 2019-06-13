@@ -8,11 +8,7 @@ import java.util.Random
  */
 class RandomShortInstantiator(random: Random) : RandomInstantiator<Short>(random) {
 
-    override fun instantiate(random: Random): Short {
-        return random.nextInt(Short.MAX_VALUE.toInt()).toShort()
-    }
+    override val supportedType = Short::class.java
 
-    override fun supportedType(): Class<Short> {
-        return Short::class.java
-    }
+    override fun instantiate(random: Random) = random.nextInt(Short.MAX_VALUE.toInt()).toShort()
 }

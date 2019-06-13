@@ -23,7 +23,7 @@ abstract class InstantiatorTest<T> {
 
     @Test
     fun `supportedClass returns supportedType`() {
-        Assert.assertEquals(supportedType, instantiator.supportedType())
+        Assert.assertEquals(supportedType, instantiator.supportedType)
     }
 
     @Test
