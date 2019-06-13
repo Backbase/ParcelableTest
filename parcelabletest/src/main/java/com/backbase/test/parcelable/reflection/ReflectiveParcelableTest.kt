@@ -11,6 +11,7 @@ import com.backbase.test.instantiator.PrimitiveInstantiator
 import com.backbase.test.instantiator.random.RandomBigDecimalInstantiator
 import com.backbase.test.instantiator.random.RandomDateInstantiator
 import com.backbase.test.instantiator.random.RandomIntInstantiator
+import com.backbase.test.instantiator.toMultiTypeInstantiators
 import com.backbase.test.parcelable.ParcelableTest
 import org.junit.Assert.assertTrue
 import java.lang.reflect.Modifier
@@ -41,8 +42,10 @@ abstract class ReflectiveParcelableTest<P : Parcelable> internal constructor(
      * Construct a [ReflectiveParcelableTest] instance with the provided [preferredInstantiators], the default preferred instantiators,
      * the provided [primitiveInstantiator], and the default reflective instantiator.
      */
-    constructor(primitiveInstantiator: PrimitiveInstantiator, vararg preferredInstantiators: Instantiator<*>) :
-            this(primitiveInstantiator, CompositeInstantiator(*preferredInstantiators))
+    constructor(
+        primitiveInstantiator: PrimitiveInstantiator,
+        vararg preferredInstantiators: Instantiator<*>
+    ) : this(primitiveInstantiator, CompositeInstantiator(*preferredInstantiators))
 
     /**
      * Construct a [ReflectiveParcelableTest] instance with the provided [preferredInstantiators], the default preferred instantiators,
@@ -54,21 +57,31 @@ abstract class ReflectiveParcelableTest<P : Parcelable> internal constructor(
      * Construct a [ReflectiveParcelableTest] instance with the provided [preferredInstantiators], the default preferred instantiators,
      * the provided [primitiveInstantiator], and the default reflective instantiator.
      */
-    constructor(primitiveInstantiator: PrimitiveInstantiator, vararg preferredInstantiators: MultiTypeInstantiator) :
-            this(primitiveInstantiator, CompositeMultiTypeInstantiator(*preferredInstantiators))
+    constructor(
+        primitiveInstantiator: PrimitiveInstantiator,
+        vararg preferredInstantiators: MultiTypeInstantiator
+    ) : this(primitiveInstantiator, CompositeMultiTypeInstantiator(*preferredInstantiators))
 
     /**
      * Construct a [ReflectiveParcelableTest] instance with the default preferred instantiators, the provided [primitiveInstantiator], and the default
      * reflective instantiator.
      */
-    constructor(primitiveInstantiator: PrimitiveInstantiator) : this(primitiveInstantiator, CompositeInstantiator(*DEFAULT_PREFERRED_INSTANTIATORS))
+    constructor(
+        primitiveInstantiator: PrimitiveInstantiator
+    ) : this(primitiveInstantiator, ReflectiveInstantiator(), CompositeInstantiator(*DEFAULT_PREFERRED_INSTANTIATORS))
 
     /**
      * Construct a [ReflectiveParcelableTest] instance with the provided [preferredInstantiator], the default preferred instantiators,
      * the provided [primitiveInstantiator], and the default reflective instantiator.
      */
-    constructor(primitiveInstantiator: PrimitiveInstantiator, preferredInstantiator: MultiTypeInstantiator) :
-            this(primitiveInstantiator, ReflectiveInstantiator(), preferredInstantiator)
+    constructor(
+        primitiveInstantiator: PrimitiveInstantiator,
+        preferredInstantiator: MultiTypeInstantiator
+    ) : this(
+        primitiveInstantiator,
+        ReflectiveInstantiator(),
+        CompositeMultiTypeInstantiator(preferredInstantiator, *DEFAULT_PREFERRED_INSTANTIATORS.toMultiTypeInstantiators())
+    )
 
     /**
      * Construct a [ReflectiveParcelableTest] instance with the provided [preferredInstantiator], the default preferred instantiators,
@@ -108,6 +121,7 @@ abstract class ReflectiveParcelableTest<P : Parcelable> internal constructor(
     /**
      * Resolve the class of [P] using reflection. If there is more than 1 level of inheritance before [P] is concrete, this method must be overridden.
      */
+    @Suppress("MemberVisibilityCanBePrivate") // Can be overridden by consumers
     protected fun getItemClass(): Class<P> {
         val genericSuperclass = javaClass.genericSuperclass
         if (genericSuperclass is ParameterizedType && genericSuperclass.rawType == ReflectiveParcelableTest::class.java) {
