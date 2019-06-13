@@ -2,8 +2,8 @@ package com.backbase.test.instantiator
 
 /**
  * Created by Backbase R&D B.V. on 2019-06-12.
- * A collection of multiple [Instantiator]s that can functions as a single pseudo-Instantiator (but with a different method signature for
- * instantiation).
+ * A collection of multiple [Instantiator]s that can functions as a single [MultiTypeInstantiator]. If multiple [Instantiator]s provided during
+ * construction support the same type, only the first one will be used.
  */
 open class CompositeInstantiator(
     vararg instantiators: Instantiator<*>
@@ -16,7 +16,9 @@ open class CompositeInstantiator(
     init {
         val instantiatorsByType: MutableMap<Class<*>, Instantiator<*>> = mutableMapOf()
         for (instantiator in instantiators) {
-            instantiatorsByType[instantiator.supportedClass()] = instantiator
+            val type = instantiator.supportedClass()
+            if (!instantiatorsByType.contains(type))
+                instantiatorsByType[type] = instantiator
         }
         this.instantiatorsByType = instantiatorsByType
     }
