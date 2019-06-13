@@ -5,7 +5,7 @@ package com.backbase.test.instantiator
  * A collection of multiple [Instantiator]s that can functions as a single [MultiTypeInstantiator]. If multiple [Instantiator]s provided during
  * construction support the same type, only the first one will be used.
  */
-open class CompositeInstantiator(
+class CompositeInstantiator(
     vararg instantiators: Instantiator<*>
 ) : MultiTypeInstantiator {
 
@@ -23,9 +23,9 @@ open class CompositeInstantiator(
         this.instantiatorsByType = instantiatorsByType
     }
 
-    final override fun supports(type: Class<*>) = instantiatorsByType.contains(type)
+    override fun supports(type: Class<*>) = instantiatorsByType.contains(type)
 
-    final override fun <T> instantiate(type: Class<T>): T {
+    override fun <T> instantiate(type: Class<T>): T {
         val instantiator = instantiatorsByType[type] ?: error("Type $type is not supported by this ${javaClass.simpleName}")
         @Suppress("UNCHECKED_CAST") return instantiator.instantiate() as T
     }

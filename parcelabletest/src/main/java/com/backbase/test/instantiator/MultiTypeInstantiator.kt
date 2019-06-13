@@ -5,8 +5,7 @@ package com.backbase.test.instantiator
  * Similar to [Instantiator], but supports instantiating multiple types. API is less safe than that of [Instantiator], as an invalid type can be
  * passed to [instantiate] by the consumer.
  */
-// TODO: Is "internal" correct?
-internal interface MultiTypeInstantiator {
+interface MultiTypeInstantiator {
 
     fun supports(type: Class<*>): Boolean
 

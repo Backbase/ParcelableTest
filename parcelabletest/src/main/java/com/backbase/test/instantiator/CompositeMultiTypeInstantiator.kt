@@ -5,7 +5,7 @@ package com.backbase.test.instantiator
  * A collection of multiple [MultiTypeInstantiator]s that can function as a single [MultiTypeInstantiator]. If multiple [MultiTypeInstantiator]s
  * provided during construction support the same type, only the first one will be used.
  */
-internal class CompositeMultiTypeInstantiator(
+class CompositeMultiTypeInstantiator(
     private vararg val instantiators: MultiTypeInstantiator
 ) : MultiTypeInstantiator {
 
