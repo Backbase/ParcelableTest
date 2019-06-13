@@ -1,4 +1,4 @@
-package com.backbase.test.instantiator
+package com.backbase.test
 
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type

@@ -1,5 +1,7 @@
 package com.backbase.test.instantiator
 
+import com.backbase.test.findGenericInterfaceTypeArgument
+
 /**
  * Created by Backbase R&D B.V. on 2019-06-12.
  * An item that supports instantiating objects of a parametrized type.

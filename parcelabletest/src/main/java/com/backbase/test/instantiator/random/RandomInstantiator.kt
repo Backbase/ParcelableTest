@@ -1,7 +1,7 @@
 package com.backbase.test.instantiator.random
 
 import com.backbase.test.instantiator.Instantiator
-import com.backbase.test.instantiator.findGenericSuperclassTypeArgument
+import com.backbase.test.findGenericSuperclassTypeArgument
 import java.util.Random
 
 /**
