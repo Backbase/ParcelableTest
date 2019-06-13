@@ -41,7 +41,7 @@ public abstract class ReflectiveParcelableTest<P extends Parcelable> extends Par
 
     private static final Random RANDOM = new Random();
 
-    private ReflectiveInstantiator reflectiveInstantiator;
+    private RobustReflectiveInstantiator instantiator;
 
     @CallSuper
     @Override
@@ -49,13 +49,14 @@ public abstract class ReflectiveParcelableTest<P extends Parcelable> extends Par
         super.setUp();
         final List<Instantiator<?>> preferredInstantiators = new ArrayList<>(getPreferredInstantiators());
         preferredInstantiators.addAll(defaultPreferredInstantiators());
-        reflectiveInstantiator = new ReflectiveInstantiator(getPrimitiveInstantiator(), new CompositeInstantiator(preferredInstantiators));
+        instantiator = new RobustReflectiveInstantiator(new CompositeInstantiator(preferredInstantiators), getPrimitiveInstantiator(),
+                new ReflectiveInstantiator());
     }
 
     @NonNull
     @Override
     protected final P newItem() {
-        return reflectiveInstantiator.instantiate(getItemClass());
+        return instantiator.instantiate(getItemClass());
     }
 
     @Override

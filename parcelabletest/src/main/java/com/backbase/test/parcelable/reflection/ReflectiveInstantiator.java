@@ -2,10 +2,9 @@ package com.backbase.test.parcelable.reflection;
 
 import android.os.Parcel;
 
-import com.backbase.test.instantiator.CompositeInstantiator;
-import com.backbase.test.instantiator.Instantiator;
 import com.backbase.test.instantiator.MultiTypeInstantiator;
-import com.backbase.test.instantiator.PrimitiveInstantiator;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -14,43 +13,9 @@ import java.lang.reflect.Modifier;
 import androidx.annotation.NonNull;
 
 /**
- * Created by Backbase R&D B.V. on 07/12/2018.
- *
- * Attempts to instantiate objects using the provided {@link MultiTypeInstantiator}s first, then falls back to using reflection if the provided
- * {@link MultiTypeInstantiator}s do not support the desired type.
- * <p>
- * Any part of this may throw a security exception depending on your JRE's security manager. For these cases, it is best to either provide custom
- * {@link Instantiator}s or just not use this class at all.
+ * Created by Backbase R&D B.V. on 2019-06-13.
  */
 final class ReflectiveInstantiator implements MultiTypeInstantiator {
-
-    @NonNull private final MultiTypeInstantiator preferredInstantiator;
-    @NonNull private final PrimitiveInstantiator primitiveInstantiator;
-
-    /**
-     * @param primitiveInstantiator a delegate that handles instantiating any primitive, string, and enum types.
-     */
-    ReflectiveInstantiator(@NonNull PrimitiveInstantiator primitiveInstantiator) {
-        this(primitiveInstantiator, new CompositeInstantiator());
-    }
-
-    /**
-     * Construct an instance with the given {@link PrimitiveInstantiator} and any number of preferred {@link Instantiator}s to try before falling back
-     * to reflection.
-     */
-    ReflectiveInstantiator(@NonNull PrimitiveInstantiator primitiveInstantiator, @NonNull Instantiator... preferredInstantiators) {
-        this(primitiveInstantiator, new CompositeInstantiator(preferredInstantiators));
-    }
-
-    /**
-     * @param primitiveInstantiator a delegate that handles instantiating any primitive, string, and enum types.
-     * @param preferredInstantiator a delegate used to instantiate any supported type before reflection is attempted.
-     *                              Useful for types that cause reflection issues.
-     */
-    ReflectiveInstantiator(@NonNull PrimitiveInstantiator primitiveInstantiator, @NonNull MultiTypeInstantiator preferredInstantiator) {
-        this.preferredInstantiator = preferredInstantiator;
-        this.primitiveInstantiator = primitiveInstantiator;
-    }
 
     /**
      * This is a very slow implementation because it's difficult to generically tell if instantiation will
@@ -58,13 +23,13 @@ final class ReflectiveInstantiator implements MultiTypeInstantiator {
      * best to skip this method and just try {@link #instantiate(Class)}.
      */
     @Override
-    public boolean supports(@NonNull Class<?> objectClass) {
-        if (objectClass.isArray()) {
+    public boolean supports(@NotNull Class<?> type) {
+        if (type.isArray()) {
             // TODO Handle arrays
             return false;
         } else {
             try {
-                instantiate(objectClass);
+                instantiate(type);
                 return true;
             } catch (Exception error) {
                 return false;
@@ -72,28 +37,10 @@ final class ReflectiveInstantiator implements MultiTypeInstantiator {
         }
     }
 
-    /**
-     * Constructs an {@link O} with all of its member fields populated. First attempts to use one of the additional {@link Instantiator}s provided in
-     * the constructor. If none of those supports the given type, attempts to use the {@link PrimitiveInstantiator} provided in the constructor. If
-     * the given type is still not supported, this method uses reflection to instantiate the object and recursion to populate any member fields.
-     *
-     * @param objectClass The class to instantiate
-     * @return an object of type {@link O} with all of its member fields populated.
-     */
     @Override
-    public <O> O instantiate(@NonNull Class<O> objectClass) {
-        if (preferredInstantiator.supports(objectClass)) {
-            return preferredInstantiator.instantiate(objectClass);
-        } else if (primitiveInstantiator.supports(objectClass)) {
-            return primitiveInstantiator.instantiate(objectClass);
-        } else {
-            return reflectivelyInstantiate(objectClass);
-        }
-    }
-
-    private <O> O reflectivelyInstantiate(@NonNull Class<O> objectClass) {
+    public <T> T instantiate(@NotNull Class<T> type) {
         try {
-            final Constructor<O> chosenConstructor = chooseMostConvenientConstructor(objectClass);
+            final Constructor<T> chosenConstructor = chooseMostConvenientConstructor(type);
 
             final Class<?>[] chosenConstructorParameterTypes = chosenConstructor.getParameterTypes();
             final Object[] initArgs = new Object[chosenConstructorParameterTypes.length];
@@ -101,12 +48,12 @@ final class ReflectiveInstantiator implements MultiTypeInstantiator {
                 Class<?> parameterClass = chosenConstructorParameterTypes[i];
                 initArgs[i] = instantiate(parameterClass);
             }
-            final O object = chosenConstructor.newInstance(initArgs);
+            final T object = chosenConstructor.newInstance(initArgs);
             populateUninitializedFields(object);
             return object;
         } catch (Exception exception) {
             // Signature does not allow for checked exceptions:
-            throw new RuntimeInstantiationException("Could not reflectively instantiate " + objectClass.getName(), exception);
+            throw new RuntimeInstantiationException("Could not reflectively instantiate " + type.getName(), exception);
         }
     }
 
@@ -218,7 +165,7 @@ final class ReflectiveInstantiator implements MultiTypeInstantiator {
                 || fieldValue.equals(0L) // uninitialized long
                 || fieldValue.equals(0f) // uninitialized float
                 || fieldValue.equals(0d) // uninitialized double
-                || fieldValue.equals('\u0000'); // uninitlized char
+                || fieldValue.equals('\u0000'); // uninitialized char
     }
 
     @NonNull
