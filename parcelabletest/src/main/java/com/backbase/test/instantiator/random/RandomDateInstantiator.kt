@@ -8,7 +8,5 @@ import java.util.Random
  */
 class RandomDateInstantiator(random: Random) : RandomInstantiator<Date>(random) {
 
-    override val supportedType = Date::class.java
-
     override fun instantiate(random: Random) = Date(random.nextLong())
 }

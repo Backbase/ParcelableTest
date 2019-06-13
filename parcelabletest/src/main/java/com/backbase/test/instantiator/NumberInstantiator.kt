@@ -8,7 +8,5 @@ class NumberInstantiator(
     private val instantiator: Instantiator<out Number>
 ) : Instantiator<Number> {
 
-    override val supportedType = Number::class.java
-
     override fun instantiate() = instantiator.instantiate()
 }

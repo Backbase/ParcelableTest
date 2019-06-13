@@ -8,8 +8,6 @@ import java.util.Random
  */
 class RandomCharInstantiator(random: Random) : RandomInstantiator<Char>(random) {
 
-    override val supportedType = Char::class.java
-
     override fun instantiate(random: Random): Char {
         val byteArray = ByteArray(1)
         random.nextBytes(byteArray)

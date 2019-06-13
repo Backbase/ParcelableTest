@@ -8,7 +8,5 @@ import java.util.Random
  */
 class RandomBooleanInstantiator(random: Random) : RandomInstantiator<Boolean>(random) {
 
-    override val supportedType = Boolean::class.java
-
     override fun instantiate(random: Random) = random.nextBoolean()
 }

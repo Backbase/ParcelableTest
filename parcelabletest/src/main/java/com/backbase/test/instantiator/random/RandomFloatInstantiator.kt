@@ -8,7 +8,5 @@ import java.util.Random
  */
 class RandomFloatInstantiator(random: Random) : RandomInstantiator<Float>(random) {
 
-    override val supportedType = Float::class.java
-
     override fun instantiate(random: Random) = random.nextFloat()
 }
