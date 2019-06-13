@@ -1,6 +1,5 @@
 package com.backbase.test.instantiator
 
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -22,7 +21,6 @@ class PrimitiveInstantiatorTest : BasePrimitiveInstantiatorTest() {
     @Mock lateinit var mockDoubleInstantiator: Instantiator<Double>
     @Mock lateinit var mockCharInstantiator: Instantiator<Char>
     @Mock lateinit var mockStringInstantiator: Instantiator<String>
-    @Mock lateinit var mockEnumInstantiator: EnumInstantiator
 
     override lateinit var instantiator: PrimitiveInstantiator
 
@@ -37,14 +35,6 @@ class PrimitiveInstantiatorTest : BasePrimitiveInstantiatorTest() {
         whenever(mockDoubleInstantiator.instantiate()).thenReturn(TestPrimitives.TEST_DOUBLE)
         whenever(mockCharInstantiator.instantiate()).thenReturn(TestPrimitives.TEST_CHAR)
         whenever(mockStringInstantiator.instantiate()).thenReturn(TestPrimitives.TEST_STRING)
-        whenever(mockEnumInstantiator.supports(any())).thenAnswer { invocation ->
-            val classArg: Class<*> = invocation.getArgument(0)
-            classArg.isEnum
-        }
-        whenever(mockEnumInstantiator.instantiate(any<Class<Enum<*>>>())).thenAnswer { invocation ->
-            val enumClass: Class<Enum<*>> = invocation.getArgument(0)
-            enumClass.enumConstants[0]
-        }
 
         instantiator = PrimitiveInstantiator(
             mockBooleanInstantiator,
@@ -55,8 +45,7 @@ class PrimitiveInstantiatorTest : BasePrimitiveInstantiatorTest() {
             mockFloatInstantiator,
             mockDoubleInstantiator,
             mockCharInstantiator,
-            mockStringInstantiator,
-            mockEnumInstantiator
+            mockStringInstantiator
         )
     }
 }

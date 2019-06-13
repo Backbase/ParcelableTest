@@ -1,6 +1,5 @@
 package com.backbase.test.instantiator
 
-import com.backbase.test.parcelable.TestEnum
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -25,7 +24,7 @@ class RandomPrimitiveInstantiatorTest : BasePrimitiveInstantiatorTest() {
 
     @Before
     fun setUp() {
-        instantiator = PrimitiveInstantiator(mockRandom)
+        instantiator = PrimitiveInstantiator.ofRandom(mockRandom)
 
         whenever(mockRandom.nextBoolean()).thenReturn(TestPrimitives.TEST_BOOLEAN)
         whenever(mockRandom.nextInt(Short.MAX_VALUE.toInt())).thenReturn(TestPrimitives.TEST_SHORT.toInt())
@@ -33,7 +32,6 @@ class RandomPrimitiveInstantiatorTest : BasePrimitiveInstantiatorTest() {
         whenever(mockRandom.nextLong()).thenReturn(TestPrimitives.TEST_LONG)
         whenever(mockRandom.nextFloat()).thenReturn(TestPrimitives.TEST_FLOAT)
         whenever(mockRandom.nextDouble()).thenReturn(TestPrimitives.TEST_DOUBLE)
-        whenever(mockRandom.nextInt(TestEnum.values().size)).thenReturn(0)
 
         // Bytes, chars, and strings all use nextBytes:
         whenever(mockRandom.nextInt(expectedStringMaxLength)).thenReturn(TestPrimitives.TEST_STRING.length)

@@ -1,6 +1,5 @@
 package com.backbase.test.instantiator
 
-import com.backbase.test.parcelable.TestEnum
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -69,9 +68,6 @@ abstract class BasePrimitiveInstantiatorTest {
     fun `string is supported`() = testSupportsClass(String::class.java)
 
     @Test
-    fun `enum is supported`() = testSupportsClass(TestEnum::class.java)
-
-    @Test
     fun `arbitrary other class is not supported`() = testSupportsClass(BasePrimitiveInstantiatorTest::class.java, isSupported = false)
 
     private fun testSupportsClass(testClass: Class<out Any>?, isSupported: Boolean = true) {
@@ -112,9 +108,6 @@ abstract class BasePrimitiveInstantiatorTest {
 
     @Test
     fun `string is instantiated`() = testInstantiatesClass(TestPrimitives.TEST_STRING, isPrimitive = false)
-
-    @Test
-    fun `enum is provided`() = testInstantiatesClass(TestEnum.A, isPrimitive = false)
 
     @Test(expected = IllegalArgumentException::class)
     fun `instantiate with unsupported type throws IllegalArgumentException`() {

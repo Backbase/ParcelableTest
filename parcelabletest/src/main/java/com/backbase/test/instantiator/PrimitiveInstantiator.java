@@ -4,23 +4,47 @@ import com.backbase.test.instantiator.random.RandomBooleanInstantiator;
 import com.backbase.test.instantiator.random.RandomByteInstantiator;
 import com.backbase.test.instantiator.random.RandomCharInstantiator;
 import com.backbase.test.instantiator.random.RandomDoubleInstantiator;
-import com.backbase.test.instantiator.random.RandomEnumInstantiator;
 import com.backbase.test.instantiator.random.RandomFloatInstantiator;
 import com.backbase.test.instantiator.random.RandomIntInstantiator;
 import com.backbase.test.instantiator.random.RandomLongInstantiator;
 import com.backbase.test.instantiator.random.RandomShortInstantiator;
 import com.backbase.test.instantiator.random.RandomStringInstantiator;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 
 /**
  * Created by Backbase R&D B.V. on 2019-06-12.
- * A {@link MultiTypeInstantiator} that supports all Java primitive types, their boxed counterparts, Strings, and enums. Support is provided via
- * individual constructor {@link Instantiator}s.
+ * A {@link MultiTypeInstantiator} that supports all Java primitive types, their boxed counterparts, and Strings. Support is provided via individual
+ * constructor {@link Instantiator}s.
  */
-public final class PrimitiveInstantiator implements MultiTypeInstantiator {
+public final class PrimitiveInstantiator implements ConstrainedMultiTypeInstantiator {
+
+    private static final Set<Class<?>> SUPPORTED_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            boolean.class,
+            Boolean.class,
+            byte.class,
+            Byte.class,
+            short.class,
+            Short.class,
+            int.class,
+            Integer.class,
+            long.class,
+            Long.class,
+            float.class,
+            Float.class,
+            double.class,
+            Double.class,
+            char.class,
+            Character.class,
+            String.class
+    )));
 
     private final Instantiator<Boolean> booleanInstantiator;
     private final Instantiator<Byte> byteInstantiator;
@@ -31,19 +55,18 @@ public final class PrimitiveInstantiator implements MultiTypeInstantiator {
     private final Instantiator<Double> doubleInstantiator;
     private final Instantiator<Character> characterInstantiator;
     private final Instantiator<String> stringInstantiator;
-    private final EnumInstantiator enumInstantiator;
 
-    public PrimitiveInstantiator(Random random) {
-        this(new RandomBooleanInstantiator(random), new RandomByteInstantiator(random), new RandomShortInstantiator(random),
-                new RandomIntInstantiator(random), new RandomLongInstantiator(random), new RandomFloatInstantiator(random),
-                new RandomDoubleInstantiator(random), new RandomCharInstantiator(random), new RandomStringInstantiator(random),
-                new RandomEnumInstantiator(random));
+    public static PrimitiveInstantiator ofRandom(Random random) {
+        return new PrimitiveInstantiator(new RandomBooleanInstantiator(random), new RandomByteInstantiator(random),
+                new RandomShortInstantiator(random), new RandomIntInstantiator(random), new RandomLongInstantiator(random),
+                new RandomFloatInstantiator(random), new RandomDoubleInstantiator(random), new RandomCharInstantiator(random),
+                new RandomStringInstantiator(random));
     }
 
     public PrimitiveInstantiator(Instantiator<Boolean> booleanInstantiator, Instantiator<Byte> byteInstantiator,
             Instantiator<Short> shortInstantiator, Instantiator<Integer> integerInstantiator, Instantiator<Long> longInstantiator,
             Instantiator<Float> floatInstantiator, Instantiator<Double> doubleInstantiator, Instantiator<Character> characterInstantiator,
-            Instantiator<String> stringInstantiator, EnumInstantiator enumInstantiator) {
+            Instantiator<String> stringInstantiator) {
         this.booleanInstantiator = booleanInstantiator;
         this.byteInstantiator = byteInstantiator;
         this.shortInstantiator = shortInstantiator;
@@ -53,21 +76,12 @@ public final class PrimitiveInstantiator implements MultiTypeInstantiator {
         this.doubleInstantiator = doubleInstantiator;
         this.characterInstantiator = characterInstantiator;
         this.stringInstantiator = stringInstantiator;
-        this.enumInstantiator = enumInstantiator;
     }
 
+    @NonNull
     @Override
-    public final boolean supports(@NonNull Class<?> objectClass) {
-        return isBooleanType(objectClass)
-                || isByteType(objectClass)
-                || isShortType(objectClass)
-                || isIntegerType(objectClass)
-                || isLongType(objectClass)
-                || isFloatType(objectClass)
-                || isDoubleType(objectClass)
-                || isCharacterType(objectClass)
-                || isStringType(objectClass)
-                || enumInstantiator.supports(objectClass);
+    public Collection<Class<?>> getSupportedTypes() {
+        return SUPPORTED_TYPES;
     }
 
     @Override
@@ -99,10 +113,8 @@ public final class PrimitiveInstantiator implements MultiTypeInstantiator {
         } else if (isStringType(type)) {
             //noinspection unchecked
             return (T) stringInstantiator.instantiate();
-        } else if (enumInstantiator.supports(type)) {
-            return enumInstantiator.instantiate(type);
         } else {
-            throw new IllegalArgumentException("Expected a supported type, by got " + type.getName() + " instead");
+            throw new IllegalArgumentException(getClass().getSimpleName() + " does not support type " + type);
         }
     }
 

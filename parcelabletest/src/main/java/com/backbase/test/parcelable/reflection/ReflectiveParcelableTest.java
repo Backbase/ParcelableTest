@@ -79,7 +79,7 @@ public abstract class ReflectiveParcelableTest<P extends Parcelable> extends Par
     }
 
     protected PrimitiveInstantiator getPrimitiveInstantiator() {
-        return new PrimitiveInstantiator(RANDOM);
+        return PrimitiveInstantiator.ofRandom(RANDOM);
     }
 
     /**
