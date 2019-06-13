@@ -10,5 +10,5 @@ class RandomDoubleInstantiator(random: Random) : RandomInstantiator<Double>(rand
 
     override fun instantiate(random: Random) = random.nextDouble()
 
-    override fun supportedClass() = Double::class.java
+    override fun supportedType() = Double::class.java
 }

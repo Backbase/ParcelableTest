@@ -10,5 +10,5 @@ class RandomBooleanInstantiator(random: Random) : RandomInstantiator<Boolean>(ra
 
     override fun instantiate(random: Random) = random.nextBoolean()
 
-    override fun supportedClass() = Boolean::class.java
+    override fun supportedType() = Boolean::class.java
 }

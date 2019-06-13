@@ -24,8 +24,8 @@ class CompositeInstantiatorTest {
 
     @Before
     fun setUp() {
-        whenever(instantiator1.supportedClass()).thenReturn(String::class.java)
-        whenever(instantiator2.supportedClass()).thenReturn(Int::class.java)
+        whenever(instantiator1.supportedType()).thenReturn(String::class.java)
+        whenever(instantiator2.supportedType()).thenReturn(Int::class.java)
         instantiator = CompositeInstantiator(instantiator1, instantiator2)
     }
 

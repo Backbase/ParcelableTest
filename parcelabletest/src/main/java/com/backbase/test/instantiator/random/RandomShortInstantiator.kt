@@ -12,7 +12,7 @@ class RandomShortInstantiator(random: Random) : RandomInstantiator<Short>(random
         return random.nextInt(Short.MAX_VALUE.toInt()).toShort()
     }
 
-    override fun supportedClass(): Class<Short> {
+    override fun supportedType(): Class<Short> {
         return Short::class.java
     }
 }

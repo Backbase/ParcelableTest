@@ -10,5 +10,5 @@ class NumberInstantiator(
 
     override fun instantiate() = instantiator.instantiate()
 
-    override fun supportedClass() = Number::class.java
+    override fun supportedType() = Number::class.java
 }

@@ -16,7 +16,7 @@ open class CompositeInstantiator(
     init {
         val instantiatorsByType: MutableMap<Class<*>, Instantiator<*>> = mutableMapOf()
         for (instantiator in instantiators) {
-            val type = instantiator.supportedClass()
+            val type = instantiator.supportedType()
             if (!instantiatorsByType.contains(type))
                 instantiatorsByType[type] = instantiator
         }

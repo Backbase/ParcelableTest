@@ -10,5 +10,5 @@ class RandomDateInstantiator(random: Random) : RandomInstantiator<Date>(random) 
 
     override fun instantiate(random: Random) = Date(random.nextLong())
 
-    override fun supportedClass() = Date::class.java
+    override fun supportedType() = Date::class.java
 }

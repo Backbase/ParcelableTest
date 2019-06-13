@@ -10,5 +10,5 @@ class RandomFloatInstantiator(random: Random) : RandomInstantiator<Float>(random
 
     override fun instantiate(random: Random) = random.nextFloat()
 
-    override fun supportedClass() = Float::class.java
+    override fun supportedType() = Float::class.java
 }

@@ -14,5 +14,5 @@ class RandomByteInstantiator(random: Random) : RandomInstantiator<Byte>(random) 
         return byteArray[0]
     }
 
-    override fun supportedClass() = Byte::class.java
+    override fun supportedType() = Byte::class.java
 }

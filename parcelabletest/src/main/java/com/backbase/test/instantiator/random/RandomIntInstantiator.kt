@@ -10,5 +10,5 @@ class RandomIntInstantiator(random: Random) : RandomInstantiator<Int>(random) {
 
     override fun instantiate(random: Random) = random.nextInt()
 
-    override fun supportedClass() = Int::class.java
+    override fun supportedType() = Int::class.java
 }

@@ -10,5 +10,5 @@ class RandomBigDecimalInstantiator(random: Random) : RandomInstantiator<BigDecim
 
     override fun instantiate(random: Random) = BigDecimal(random.nextInt())
 
-    override fun supportedClass() = BigDecimal::class.java
+    override fun supportedType() = BigDecimal::class.java
 }

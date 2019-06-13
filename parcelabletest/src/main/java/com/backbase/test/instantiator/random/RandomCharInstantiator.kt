@@ -14,5 +14,5 @@ class RandomCharInstantiator(random: Random) : RandomInstantiator<Char>(random) 
         return byteArray[0].toChar()
     }
 
-    override fun supportedClass() = Char::class.java
+    override fun supportedType() = Char::class.java
 }

@@ -22,7 +22,7 @@ class RandomStringInstantiator(
         return String(byteArray, Charset.defaultCharset())
     }
 
-    override fun supportedClass(): Class<String> {
+    override fun supportedType(): Class<String> {
         return String::class.java
     }
 }

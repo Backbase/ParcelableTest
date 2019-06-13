@@ -10,5 +10,5 @@ class RandomLongInstantiator(random: Random) : RandomInstantiator<Long>(random) 
 
     override fun instantiate(random: Random) = random.nextLong()
 
-    override fun supportedClass() = Long::class.java
+    override fun supportedType() = Long::class.java
 }
