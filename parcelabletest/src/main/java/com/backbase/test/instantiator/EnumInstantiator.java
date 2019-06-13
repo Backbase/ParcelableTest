@@ -10,7 +10,7 @@ public abstract class EnumInstantiator implements MultiTypeInstantiator {
 
     @Override
     public final boolean supports(@NonNull Class<?> type) {
-        return Enum.class.isAssignableFrom(type);
+        return type.isEnum();
     }
 
     @Override
